@@ -2,9 +2,9 @@
 import random
 number = random.randint(-10000, 10000)
 
-lastChar = int(str(number)[-1])
+lastChar = number % 10 if number >= 0 else number % -10
 
-print("Last digit of {} is {}".format(number, lastChar), end = " ")
+print("Last digit of {} is {}".format(number, lastChar), end=" ")
 
 if lastChar > 5:
     print("and is greater than 5")
