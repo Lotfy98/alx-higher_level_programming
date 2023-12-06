@@ -2,39 +2,46 @@
 """
 reads stdin line by line and computes metrics
 """
-import sys
 
-file_size = 0
-status_tally = {"200": 0, "301": 0, "400": 0, "401": 0,
-                "403": 0, "404": 0, "405": 0, "500": 0}
-i = 0
+
+import sys
+import signal
+
+
+total_size = 0
+status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
+line_count = 0
+
+
+def print_stats():
+    print("File size: {}".format(total_size))
+    for code in sorted(status_codes.keys()):
+        if status_codes[code]:
+            print("{}: {}".format(code, status_codes[code]))
+
+
+def signal_handler(sig, frame):
+    print_stats()
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, signal_handler)
+
+
 try:
     for line in sys.stdin:
-        tokens = line.split()
-        if len(tokens) >= 2:
-            a = i
-            if tokens[-2] in status_tally:
-                status_tally[tokens[-2]] += 1
-                i += 1
-            try:
-                file_size += int(tokens[-1])
-                if a == i:
-                    i += 1
-            except FileNotFoundError:
-                if a == i:
-                    continue
-        if i % 10 == 0:
-            print("File size: {:d}".format(file_size))
-            for key, value in sorted(status_tally.items()):
-                if value:
-                    print("{:s}: {:d}".format(key, value))
-    print("File size: {:d}".format(file_size))
-    for key, value in sorted(status_tally.items()):
-        if value:
-            print("{:s}: {:d}".format(key, value))
+        line_count += 1
+        parts = line.split()
+        size = int(parts[-1])
+        status_code = int(parts[-2])
+        total_size += size
+        if status_code in status_codes:
+            status_codes[status_code] += 1
+
+        if line_count % 10 == 0:
+            print_stats()
 
 except KeyboardInterrupt:
-    print("File size: {:d}".format(file_size))
-    for key, value in sorted(status_tally.items()):
-        if value:
-            print("{:s}: {:d}".format(key, value))
+    pass
+finally:
+    print_stats()
