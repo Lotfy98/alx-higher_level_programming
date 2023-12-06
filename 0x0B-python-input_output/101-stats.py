@@ -1,59 +1,31 @@
 #!/usr/bin/python3
+import random
 import sys
-import signal
+from time import sleep
+import datetime
 
-# Initialize a dictionary to store the count of each status code
-status_codes = {}
-# Initialize a variable to store the total file size
-total_size = 0
-# Initialize a counter for the number of lines read
-line_count = 0
+# This script generates log data for testing purposes.
+# It simulates the output of a web server by printing
+# IP addresses, timestamps, HTTP methods, status codes, and file sizes.
 
-# Define a signal handler for keyboard interruption (CTRL + C)
+for i in range(10000):
+    # Sleep for a random short interval to simulate real-time data generation
+    sleep(random.random())
+    # Generate a random IP address
+    ip_address = "{:d}.{:d}.{:d}.{:d}".format(
+        random.randint(1, 255), random.randint(1, 255),
+        random.randint(1, 255), random.randint(1, 255)
+    )
+    # Generate a current timestamp
+    timestamp = datetime.datetime.now()
+    # Choose a random status code from the provided list
+    status_code = random.choice([200, 301, 400, 401, 403, 404, 405, 500])
+    # Generate a random file size
+    file_size = random.randint(1, 1024)
 
-
-def signal_handler(sig, frame):
-    print_statistics()
-    sys.exit(0)
-
-
-# Register the signal handler for SIGINT (CTRL + C)
-signal.signal(signal.SIGINT, signal_handler)
-
-# Function to print the statistics
-
-
-def print_statistics():
-    print("File size: {}".format(total_size))
-    for status_code in sorted(status_codes.keys()):
-        print("{}: {}".format(status_code, status_codes[status_code]))
-
-
-# Read from stdin line by line
-try:
-    for line in sys.stdin:
-        # Increment the line count
-        line_count += 1
-        # Split the line into components
-        parts = line.split()
-        # Extract the status code and file size from the line
-        status_code = int(parts[-2])
-        file_size = int(parts[-1])
-        # Update the total file size
-        total_size += file_size
-        # Update the count for the status code
-        if status_code not in status_codes:
-            status_codes[status_code] = 0
-        status_codes[status_code] += 1
-
-        # Print the statistics every 10 lines
-        if line_count % 10 == 0:
-            print_statistics()
-
-except KeyboardInterrupt:
-    # Print the statistics upon keyboard interruption
-    print_statistics()
-    raise
-
-# Print the final statistics if the end of input is reached
-print_statistics()
+    # Print the generated log entry to stdout
+    sys.stdout.write("{} - [{}] \"GET /projects/260 HTTP/1.1\" {} {}\n".format(
+        ip_address, timestamp, status_code, file_size
+    ))
+    # Flush the output to ensure it's printed in real-time
+    sys.stdout.flush()
