@@ -18,6 +18,7 @@ except FileNotFoundError:
     args = []
 
 
-args.extend(sys.argv[1:])
+for arg in argv[1:]:
+    args.append(arg)
 
 save_to_json_file(args, filename)
