@@ -5,7 +5,7 @@
 import json
 
 
-def load_from_file(filename):
+def load_from_json_file(filename):
     """
     Create object from JSON file
 
