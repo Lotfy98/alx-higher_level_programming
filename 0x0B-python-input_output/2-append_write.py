@@ -2,7 +2,7 @@
 """Append module"""
 
 
-def appen_write(filename="", text=""):
+def append_write(filename="", text=""):
     """
     Appends str at end of txt file and returns num of chars added
 
