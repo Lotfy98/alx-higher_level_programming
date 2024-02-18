@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+"""Lists states"""
+
 import MySQLdb
 from sys import argv
 
